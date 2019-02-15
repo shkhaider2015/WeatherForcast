@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">WeatherForcast</string>
+    <string name="no_network">Null</string>
+    <string name="no_network1">No Network</string>
+
+    <!-- slide.xml  -->
+
+    <string name="humidity">H</string>
+    <string name="pressure">P</string>
+    <string name="wind">W</string>
+
+    <string name="default_value">34</string>
+    <string name="default_city">karachi</string>
+
+    <string name="degree">°</string>
+    <string name="winbd_unit">km/h</string>
+
+    <!-- activity_main.xml -->
+
+    <string name="check_now">Check Now</string>
+
+
+    <!-- table_layout.xml -->
+
+    <string name="heading_day">Days</string>
+    <string name="heading_temprature">C</string>
+    <string name="heading_humidity">H</string>
+
+    <string name="day_name">Sunday</string>
+    <string name="day_temprature">34</string>
+    <string name="day_humidity">76</string>
+
+
+
+
+</resources>
