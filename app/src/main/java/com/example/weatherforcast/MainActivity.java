@@ -1,6 +1,7 @@
 package com.example.weatherforcast;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -108,5 +109,31 @@ class ThreadForJSON extends Thread
 
     public ArrayList<JSONClass> getJsonClasses() {
         return jsonClasses;
+    }
+
+
+
+    private class AsyncTaskRunner extends AsyncTask<String, String, String>
+    {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 }
