@@ -1,32 +1,30 @@
 package com.example.weatherforcast;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
 
-    ThreadForJSON threadForJSON;
-    slideFragment slideFragment;
-    Button mCheckNow;
-
-
-    public MainActivity()
-    {
-        threadForJSON = new ThreadForJSON(this);
-        slideFragment = new slideFragment();
-    }
+    protected AsyncTaskRunner asyncTaskRunner;
+    protected slideFragment slideFragment;
+    private static final String TAG = "MainActivity";
 
 
 
@@ -34,106 +32,113 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setData();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        threadForJSON.start();
 
-        mCheckNow = findViewById(R.id.check_now);
-        mCheckNow.setOnClickListener(this);
+        asyncTaskRunner = new AsyncTaskRunner(this);
+        ProgressBar progressBar = findViewById(R.id.progressbar);
+        TextView load = findViewById(R.id.load);
 
-        slideFragment.setJsonData(threadForJSON.getJsonClasses());
-
-
+        asyncTaskRunner.execute();
 
 
+        Toast.makeText(this, "Wait for Data Retrieving", Toast.LENGTH_LONG).show();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
 
+                slideFragment = new slideFragment();
+                slideFragment.setJsonData(asyncTaskRunner.getJsonClassesList());
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.add(R.id.fragment_container, slideFragment);
+                fragmentTransaction.commit();
+                fragmentTransaction.addToBackStack(null);
+
+
+
+            }
+        },10000);
+
+
+
+
+
+    // onCreate() ends
+    }
+
+    public void setData()
+    {
+        Data dataObject = Data.getDataInstance();
+        dataObject.setData("Karachi");
+        dataObject.setData("Islamabad");
+        dataObject.setData("Peshawar");
+
+        Log.d(TAG, "setData: Data set for Weather");
     }
 
 
-    @Override
-    public void onClick(View v)
+
+    private class AsyncTaskRunner extends AsyncTask<Void, Void, Void>
     {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        private Context context;
+        private ArrayList<JSONClass> jsonClassesList;
+        private Data dataObject;
 
-        fragmentTransaction.add(R.id.fragment_container, slideFragment);
-        fragmentTransaction.commit();
-        fragmentTransaction.addToBackStack(null);
-
-        mCheckNow.setText("back");
-
-
-    }
-}
-
-class ThreadForJSON extends Thread
-{
-    private ArrayList<JSONClass> jsonClasses;
-    private Data data;
-    private Context context;
-
-    public ThreadForJSON(Context context)
-    {
-        this.context = context;
-        jsonClasses = new ArrayList<>();
-        data = Data.getDataInstance();
-    }
-
-    @Override
-    public void run()
-    {
-
-        mSetData();
-        mFetchJSONData();
-
-    }
-
-    private void mFetchJSONData()
-    {
-        for(int i=0; i<data.getData().size(); i++)
+        public AsyncTaskRunner(Context context)
         {
-            JSONClass jsonClass = new JSONClass(context, data.getDataItem(i));
-            jsonClasses.add(i, jsonClass);
+            this.context = context;
+            jsonClassesList = new ArrayList<>();
+            dataObject = Data.getDataInstance();
         }
-    }
 
-    private void mSetData()
-    {
-        data.setData("karachi");
-        data.setData("peshawar");
-        data.setData("islamabad");
-    }
-
-    public ArrayList<JSONClass> getJsonClasses() {
-        return jsonClasses;
-    }
-
-
-
-    private class AsyncTaskRunner extends AsyncTask<String, String, String>
-    {
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected Void doInBackground(Void... voids)
+        {
+
+            for(int i = 0; i < dataObject.getData().size(); i++)
+            {
+                JSONClass jsonClass = new JSONClass(context, dataObject.getDataItem(i));
+                jsonClassesList.add(i, jsonClass);
+
+            }
             return null;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            Log.d(TAG, "onPreExecute: ");
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
+        protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.d(TAG, "onPostExecute: -->");
         }
+
+        public ArrayList<JSONClass> getJsonClassesList()
+        {
+            return jsonClassesList;
+        }
+
+
+
+    // AsyncTask ends
     }
+
+
+    // public class ends
 }

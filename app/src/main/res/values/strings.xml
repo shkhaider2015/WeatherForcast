@@ -18,6 +18,7 @@
     <!-- activity_main.xml -->
 
     <string name="check_now">Check Now</string>
+    <string name="loading">Loading ..</string>
 
 
     <!-- table_layout.xml -->

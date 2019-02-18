@@ -2,6 +2,7 @@ package com.example.weatherforcast;
 
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.os.StrictMode;
 
 import java.io.File;
 import java.net.URL;
@@ -54,5 +55,11 @@ public class WeatherData {
 
     public void setmCondition(String mCondition) {
         this.mCondition = mCondition;
+    }
+
+    public String getAllData()
+    {
+        String data = "Temp : " + getmTemprature() + " Cond : " + getmCondition() +  " Wind : " + getmWind() + " icon : " + getmIcon();
+        return  data;
     }
 }

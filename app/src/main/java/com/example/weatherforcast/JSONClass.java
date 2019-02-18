@@ -59,8 +59,15 @@ public class JSONClass {
                         try {
 
                             JSONArray mList = response.getJSONArray("list");
+                            Log.d(TAG, "onResponse: " + mList.length());
                             for(int i=0; i<mList.length(); i++)
                             {
+                                if( (i+1) %8 != 0 && i != 0)
+                                {
+                                    continue;
+                                }
+
+
                                 WeatherData mWeatherData = new WeatherData();
 
                                 JSONObject index = mList.getJSONObject(i);
@@ -77,12 +84,12 @@ public class JSONClass {
                                 String URL2 = ".png";
                                 String URL = URL1 + weatherMain.getString("icon") + URL2;
 
-                                Drawable drawableIcon = Drawable.createFromStream((InputStream) new URL(URL).getContent(), "src");
+                                Drawable drawableIcon = Drawable.createFromStream(((InputStream) new URL(URL).getContent()), "src");
                                 mWeatherData.setmIcon(drawableIcon);
 
 
 
-                                weatherForcast.add(i ,mWeatherData);
+                                weatherForcast.add(mWeatherData);
 
                             }
 
